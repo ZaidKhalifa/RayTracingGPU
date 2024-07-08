@@ -16,6 +16,9 @@ __device__ void write_color(const color& pixel_color, uint8_t* out, const int ro
     uint8_t rbyte = uint8_t(255.999 * r);
     uint8_t gbyte = uint8_t(255.999 * g);
     uint8_t bbyte = uint8_t(255.999 * b);
+    // uint8_t rbyte = uint8_t(min(255, int(255.999 * r)));
+    // uint8_t gbyte = uint8_t(min(255, int(255.999 * g)));
+    // uint8_t bbyte = uint8_t(min(255, int(255.999 * b)));
 
     // Write the pixel color components.
     int pos = row*width*3 + col*3;
