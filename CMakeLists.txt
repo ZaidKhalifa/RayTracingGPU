@@ -28,9 +28,13 @@ add_executable(${CMAKE_PROJECT_NAME} )
 
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     RayTracingGPU/main.cu
+    RayTracingGPU/stb_image_write.h
+    RayTracingGPU/vec3.cuh
+    RayTracingGPU/color.cuh
+    RayTracingGPU/ray.cuh
 )
 
-target_link_libraries(${CMAKE_PROJECT_NAME} ${OpenCV_LIBS} )
+# target_link_libraries(${CMAKE_PROJECT_NAME} ${OpenCV_LIBS} )
 
 target_compile_options(${CMAKE_PROJECT_NAME} 
     PRIVATE $<$<COMPILE_LANGUAGE:CXX>: >
