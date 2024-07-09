@@ -32,6 +32,10 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     RayTracingGPU/vec3.cuh
     RayTracingGPU/color.cuh
     RayTracingGPU/ray.cuh
+    RayTracingGPU/hitbox.cuh
+    RayTracingGPU/sphere.cuh
+    RayTracingGPU/hitbox_list.cuh
+    RayTracingGPU/rtutil.cuh
 )
 
 # target_link_libraries(${CMAKE_PROJECT_NAME} ${OpenCV_LIBS} )
