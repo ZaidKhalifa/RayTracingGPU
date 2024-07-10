@@ -36,6 +36,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     RayTracingGPU/sphere.cuh
     RayTracingGPU/hitbox_list.cuh
     RayTracingGPU/rtutil.cuh
+    RayTracingGPU/camera.cuh
 )
 
 # target_link_libraries(${CMAKE_PROJECT_NAME} ${OpenCV_LIBS} )
