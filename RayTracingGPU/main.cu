@@ -114,7 +114,7 @@ int main(void)
 
     // Render
 
-    unsigned int samples = 2000;
+    unsigned int samples = 2048;
     // unsigned int divisions = samples/512;
     unsigned int divisions = (samples+511)/512;
     // unsigned int rem = samples-divisions*512;

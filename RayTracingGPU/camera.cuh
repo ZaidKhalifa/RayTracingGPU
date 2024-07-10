@@ -9,7 +9,8 @@
 class camera {
 public:
     double aspect_ratio = 1.0;  // Ratio of image width over height
-    int image_width  = 100;     // Rendered image width in pixel count
+    int image_width = 100;      // Rendered image width in pixel count
+    int max_depth = 50;         // Maximum number of ray bounces into scene
 
     __device__ void init(const double aspectRatio = 1.0, const int imgWidth = 100)
     {
@@ -22,7 +23,7 @@ public:
 
         ray r = get_ray(state, x, y);
 
-        return ray_color(r, world);
+        return ray_color(r, max_depth, world, state);
     }
 
 private:
@@ -69,17 +70,43 @@ private:
         return ray(ray_origin, ray_direction);
     }
 
-    __device__ color ray_color(const ray& r, const hitbox* world) const {
-        hit_record rec;
+    // __device__ color ray_color(const ray& r, int depth, const hitbox* world, curandState& state) const {
+    //     if (depth <= 0)
+    //         return color(0,0,0);
 
-        if (world->hit(r, interval(0, infinity), rec)) 
+    //     hit_record rec;
+
+    //     if (world->hit(r, interval(0.001, infinity), rec)) 
+    //     {
+    //         vec3 direction = random_on_hemisphere(state, rec.normal);
+    //         return 0.5 * ray_color(ray(rec.p, direction), depth-1, world, state);
+    //     }
+
+    //     vec3 unit_direction = unit_vector(r.direction());
+    //     auto a = 0.5*(unit_direction.y() + 1.0);
+    //     return (1.0-a)*color(1.0, 1.0, 1.0) + a*color(0.5, 0.7, 1.0);
+    // }
+
+    __device__ color ray_color(ray r, int depth, const hitbox* world, curandState& state) const {
+        double intensity_so_far = 1.00000000;
+        for(int i = 0; i < max_depth; i++)
         {
-            return 0.5 * (rec.normal + color(1,1,1));
-        }
+            hit_record rec;
 
-        vec3 unit_direction = unit_vector(r.direction());
-        auto a = 0.5*(unit_direction.y() + 1.0);
-        return (1.0-a)*color(1.0, 1.0, 1.0) + a*color(0.5, 0.7, 1.0);
+            if (world->hit(r, interval(0.001, infinity), rec)) 
+            {
+                vec3 direction = rec.normal + random_unit_vector(state);
+                intensity_so_far *= 0.500000000;
+                r = ray(rec.p, direction);
+            }
+            else
+            {
+                vec3 unit_direction = unit_vector(r.direction());
+                auto a = 0.5*(unit_direction.y() + 1.0);
+                return intensity_so_far*((1.0-a)*color(1.0, 1.0, 1.0) + a*color(0.5, 0.7, 1.0));
+            }
+        }
+        return color(0,0,0);
     }
 };
 
