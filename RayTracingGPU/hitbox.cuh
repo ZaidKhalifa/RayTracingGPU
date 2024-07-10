@@ -24,7 +24,7 @@ class hitbox {
     // __host__ __device__ virtual ~hitbox() = default;
     __host__ __device__ virtual ~hitbox(){};
 
-    __device__ virtual bool hit(const ray& r, double ray_tmin, double ray_tmax, hit_record& rec) const = 0;
+    __device__ virtual bool hit(const ray& r, interval ray_t, hit_record& rec) const = 0;
 
     // __device__ virtual void printSphere()
     // {
