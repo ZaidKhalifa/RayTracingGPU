@@ -73,7 +73,7 @@ __global__ void initWorld(hitbox_list** world)
     (*world) = new hitbox_list();
 }
 
-__global__ void initMatLambertial(material** mat, color attenuation)
+__global__ void initMatLambertian(material** mat, color attenuation)
 {
     (*mat) = new lambertian(attenuation);
 }

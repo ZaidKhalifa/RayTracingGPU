@@ -98,7 +98,7 @@ private:
             {   
                 ray scattered;
                 color attenuation;
-                if (rec.mat->scatter(r, rec, attenuation, scattered))
+                if (rec.mat->scatter(r, rec, attenuation, scattered, state))
                     intensity_so_far *= attenuation;
                 r = scattered;
             }

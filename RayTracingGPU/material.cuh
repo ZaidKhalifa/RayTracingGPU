@@ -1,6 +1,8 @@
 #ifndef MATERIAL_CUH
 #define MATERIAL_CUH
 
+#include "hitbox.cuh"
+#include "ray.cuh"
 #include "rtutil.cuh"
 
 class hit_record;
@@ -9,7 +11,7 @@ class material {
   public:
     __device__ virtual ~material() = default;
 
-    __device__ virtual bool scatter(const ray& r_in, const hit_record& rec, color& attenuation, ray& scattered) const 
+    __device__ virtual bool scatter(const ray& r_in, const hit_record& rec, color& attenuation, ray& scattered, curandState& state) const 
     {
         return false;
     }
@@ -17,11 +19,11 @@ class material {
 
 class lambertian : public material {
   public:
-    lambertian(const color& albedo) : albedo(albedo) {}
+    __device__ lambertian(const color& albedo) : albedo(albedo) {}
 
-    __device__ bool scatter(const ray& r_in, const hit_record& rec, color& attenuation, ray& scattered)
+    __device__ bool scatter(const ray& r_in, const hit_record& rec, color& attenuation, ray& scattered, curandState& state)
     const override {
-        auto scatter_direction = rec.normal + random_unit_vector();
+        vec3 scatter_direction = rec.normal + random_unit_vector(state);
 
         if (scatter_direction.near_zero())
             scatter_direction = rec.normal;
@@ -37,9 +39,9 @@ class lambertian : public material {
 
 class metal : public material {
   public:
-    metal(const color& albedo) : albedo(albedo) {}
+    __device__ metal(const color& albedo) : albedo(albedo) {}
 
-    __device__ bool scatter(const ray& r_in, const hit_record& rec, color& attenuation, ray& scattered)
+    __device__ bool scatter(const ray& r_in, const hit_record& rec, color& attenuation, ray& scattered, curandState& state)
     const override {
         vec3 reflected = reflect(r_in.direction(), rec.normal);
         scattered = ray(rec.p, reflected);
