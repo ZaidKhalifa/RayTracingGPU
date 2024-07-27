@@ -10,6 +10,7 @@
 
 #include "color.cuh"
 #include "interval.cuh"
+#include "material.cuh"
 #include "ray.cuh"
 #include "vec3.cuh"
 

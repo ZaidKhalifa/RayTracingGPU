@@ -1,12 +1,13 @@
 #ifndef SPHERE_CUH
 #define SPHERE_CUH
 
+#include "rtutil.cuh"
 #include "hitbox.cuh"
 #include "vec3.cuh"
 
 class sphere : public hitbox {
 public:
-    __host__ __device__ sphere(const point3& center, const double& radius) : center(center), radius(fmax(0.0,radius)) {}
+    __host__ __device__ sphere(const point3& center, double radius, material* mat) : center(center), radius(fmax(0.0,radius)), mat(mat) {}
 
     __device__ bool hit(const ray& r, interval ray_t, hit_record& rec) const override {
         vec3 oc = center - r.origin();
@@ -32,6 +33,7 @@ public:
         rec.p = r.at(rec.t);
         vec3 outward_normal = (rec.p - center) / radius;
         rec.set_face_normal(r, outward_normal);
+        rec.mat = mat;
 
         return true;
     }
@@ -44,6 +46,7 @@ public:
 private:
     point3 center;
     double radius;
+    material* mat;
 };
 
 #endif

@@ -4,6 +4,7 @@
 #include "rtutil.cuh"
 
 #include "hitbox.cuh"
+#include "material.cuh"
 
 
 class camera {
@@ -88,16 +89,18 @@ private:
     // }
 
     __device__ color ray_color(ray r, int depth, const hitbox* world, curandState& state) const {
-        double intensity_so_far = 1.00000000;
+        color intensity_so_far = color(1.0, 1.0, 1.0);
         for(int i = 0; i < max_depth; i++)
         {
             hit_record rec;
 
             if (world->hit(r, interval(0.001, infinity), rec)) 
-            {
-                vec3 direction = rec.normal + random_unit_vector(state);
-                intensity_so_far *= 0.500000000;
-                r = ray(rec.p, direction);
+            {   
+                ray scattered;
+                color attenuation;
+                if (rec.mat->scatter(r, rec, attenuation, scattered))
+                    intensity_so_far *= attenuation;
+                r = scattered;
             }
             else
             {

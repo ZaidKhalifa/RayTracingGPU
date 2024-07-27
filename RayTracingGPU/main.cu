@@ -8,6 +8,7 @@
 #include "camera.cuh"
 #include "hitbox.cuh"
 #include "hitbox_list.cuh"
+#include "material.cuh"
 #include "sphere.cuh"
 
 __global__ void render(double* img, camera** cam, hitbox_list** world, int image_width, curandState *states, double frac, uint8_t* imgu) 
@@ -72,9 +73,19 @@ __global__ void initWorld(hitbox_list** world)
     (*world) = new hitbox_list();
 }
 
-__global__ void addSphere(hitbox_list** world, point3 center, double radius)
+__global__ void initMatLambertial(material** mat, color attenuation)
 {
-    (*world)->add(new sphere(center, radius));
+    (*mat) = new lambertian(attenuation);
+}
+
+__global__ void initMatMetal(material** mat, color attenuation)
+{
+    (*mat) = new metal(attenuation);
+}
+
+__global__ void addSphere(hitbox_list** world, point3 center, double radius, material** mat)
+{
+    (*world)->add(new sphere(center, radius, *mat));
 }
 
 __global__ void clean(camera** cam, hitbox_list** world)
@@ -82,6 +93,11 @@ __global__ void clean(camera** cam, hitbox_list** world)
     delete (*cam);
     (*world)->clear();
     delete (*world);
+}
+
+__global__ void delMat(material** mat)
+{
+    delete (*mat);
 }
 
 int main(void)
@@ -101,9 +117,22 @@ int main(void)
 
     hitbox_list** world;
     cudaMalloc(&world, sizeof(hitbox_list*));
+
+    material **material_ground, **material_center, **material_left, **material_right;
+    cudaMalloc(&material_ground, sizeof(material*));
+    cudaMalloc(&material_center, sizeof(material*));
+    cudaMalloc(&material_left, sizeof(material*));
+    cudaMalloc(&material_right, sizeof(material*));
+    initMatLambertian<<<1,1>>>(material_ground, color(0.8, 0.8, 0.0));
+    initMatLambertian<<<1,1>>>(material_center, color(0.1, 0.2, 0.5));
+    initMatMetal<<<1,1>>>(material_left, color(0.8, 0.8, 0.8));
+    initMatMetal<<<1,1>>>(material_right, color(0.8, 0.6, 0.2));
+
     initWorld<<<1,1>>>(world);
-    addSphere<<<1,1>>>(world, point3(0,0,-1), 0.5);
-    addSphere<<<1,1>>>(world, point3(0,-100.5,-1), 100);
+    addSphere<<<1,1>>>(world, point3(0.0, -100.5, -1.0), 100.0, material_ground);
+    addSphere<<<1,1>>>(world, point3(0.0, 0.0, -1.2), 0.5, material_center);
+    addSphere<<<1,1>>>(world, point3(-1.0, 0.0, -1.0), 0.5, material_left);
+    addSphere<<<1,1>>>(world, point3(1.0, 0.0, -1.0), 0.5, material_right);
 
 
     // Camera

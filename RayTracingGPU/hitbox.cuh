@@ -3,10 +3,13 @@
 
 #include "ray.cuh"
 
+class material;
+
 class hit_record {
   public:
     point3 p;
     vec3 normal;
+    material* mat;
     double t;
     bool front_face;
 
