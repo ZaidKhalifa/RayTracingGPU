@@ -83,6 +83,11 @@ __global__ void initMatMetal(material** mat, color attenuation, double fuzz = 0)
     (*mat) = new metal(attenuation, fuzz);
 }
 
+__global__ void initMatDielectric(material** mat, double index)
+{
+    (*mat) = new dielectric(index);
+}
+
 __global__ void addSphere(hitbox_list** world, point3 center, double radius, material** mat)
 {
     (*world)->add(new sphere(center, radius, *mat));
@@ -125,7 +130,7 @@ int main(void)
     cudaMalloc(&material_right, sizeof(material*));
     initMatLambertian<<<1,1>>>(material_ground, color(0.8, 0.8, 0.0));
     initMatLambertian<<<1,1>>>(material_center, color(0.1, 0.2, 0.5));
-    initMatMetal<<<1,1>>>(material_left, color(0.8, 0.8, 0.8), 0.3);
+    initMatDielectric<<<1,1>>>(material_left, 1.50);
     initMatMetal<<<1,1>>>(material_right, color(0.8, 0.6, 0.2), 1.0);
 
     initWorld<<<1,1>>>(world);
