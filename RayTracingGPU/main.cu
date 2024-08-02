@@ -62,10 +62,10 @@ __global__ void setup_random(curandState *states)
     // }
 }
 
-__global__ void createCam(camera** cam, double aspectRatio, int imgWidth)
+__global__ void createCam(camera** cam, double aspectRatio, int imgWidth, double vFov, point3 lookfrom, point3 lookat, vec3 vup)
 {
     (*cam) = new camera();
-    (*cam)->init(aspectRatio, imgWidth);
+    (*cam)->init(aspectRatio, imgWidth, vFov, lookfrom, lookat, vup);
 }
 
 __global__ void initWorld(hitbox_list** world)
@@ -145,9 +145,14 @@ int main(void)
 
     // Camera
 
+    double vFov     = 90.0;
+    point3 lookfrom = point3(-2,2,1);
+    point3 lookat   = point3(0,0,-1);
+    vec3   vup      = vec3(0,1,0);
+
     camera** cam;
     cudaMalloc(&cam, sizeof(camera*));
-    createCam<<<1,1>>>(cam, aspect_ratio, image_width);
+    createCam<<<1,1>>>(cam, aspect_ratio, image_width, vFov, lookfrom, lookat, vup);
 
     // Render
 
