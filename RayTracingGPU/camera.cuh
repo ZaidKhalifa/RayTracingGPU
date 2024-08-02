@@ -54,7 +54,6 @@ private:
         auto theta = degrees_to_radians(vfov);
         auto h = tan(theta/2.0);
         auto viewport_height = 2 * h * focal_length;
-        auto viewport_height = 2.0;
         auto viewport_width = viewport_height * (double(image_width)/image_height);
 
         // Calculate the u,v,w unit basis vectors for the camera coordinate frame.

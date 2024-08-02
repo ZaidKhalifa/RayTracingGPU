@@ -145,7 +145,7 @@ int main(void)
 
     // Camera
 
-    double vFov     = 90.0;
+    double vFov     = 30.0;
     point3 lookfrom = point3(-2,2,1);
     point3 lookat   = point3(0,0,-1);
     vec3   vup      = vec3(0,1,0);
