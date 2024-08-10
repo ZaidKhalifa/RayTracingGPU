@@ -7,7 +7,7 @@ class hitbox_list : public hitbox {
   public:
     hitbox** objects;
 
-    __host__ __device__ hitbox_list(int m_obj = 100)
+    __host__ __device__ hitbox_list(int m_obj = 500)
     {
         max_obj = m_obj;
         obj_count = 0;

@@ -2,6 +2,7 @@
 #define RTUTIL_CUH
 
 #include <iostream>
+#include <random>
 #include <limits>
 #include <curand.h>
 #include <curand_kernel.h>
@@ -64,6 +65,13 @@ inline __device__ double random_double(curandState& state, double min, double ma
     return min + (max-min)*random_double(state);
 }
 
+inline __host__ double random_double_h(double min = 0.0, double max = 1.0) {
+    // Returns a random real in [min,max).
+    static std::uniform_real_distribution<double> distribution(min, max);
+    static std::mt19937 generator;
+    return distribution(generator);
+}
+
 inline __device__ vec3 random_unit_vector(curandState& state) 
 {
     double phi = random_double(state, 0, d_twopi);
@@ -86,5 +94,10 @@ inline __device__ vec3 random_on_hemisphere(curandState& state, const vec3& norm
     else
         return -on_unit_sphere;
 }
+
+inline __host__ vec3 color_random(double min = 0.0, double max = 1.0) 
+    {
+        return vec3(random_double_h(min,max), random_double_h(min,max), random_double_h(min,max));
+    }
 
 #endif
