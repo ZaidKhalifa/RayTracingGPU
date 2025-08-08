@@ -1,2 +1,2 @@
 # RayTracingGPU
-Implementing ray tracing using OpenCV CUDA
+Implementing ray tracing using CUDA
